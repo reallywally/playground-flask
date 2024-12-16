@@ -1,0 +1,30 @@
+### 등록 테스트
+
+POST http://127.0.0.1:5000/create
+Content-Type: application/json
+
+{
+  "title": "테스트 타이틀",
+  "content": 1234
+}
+
+### 수정 테스트
+
+PATCH http://127.0.0.1:5000/update/2
+Content-Type: application/json
+
+{
+  "title": "테스트 타이틀2233",
+  "content": 123444
+}
+
+### raw query 테스트
+
+GET http://127.0.0.1:5000/raw-query
+Content-Type: application/json
+
+
+### raw query params 테스트
+
+GET http://127.0.0.1:5000/raw-query-params
+Content-Type: application/json
