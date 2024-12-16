@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
-from models import db, Post
+from models import db, Post, CompositeKeyTable
 from sqlalchemy.sql import text
 
 app = Flask(__name__)
@@ -86,6 +86,32 @@ def raw_query_params():
          for a in all]
 
     return jsonify(r)
+
+
+@app.route('/composite-key-table', methods=['POST'])
+def post_composite_key_table():
+    c1 = request.json.get('c1')
+    c2 = request.json.get('c2')
+    c3 = request.json.get('c3')
+
+    composite_key_tables = CompositeKeyTable(column_1=c1, column_2=c2, column_3=c3)
+
+    db.session.add(composite_key_tables)
+    db.session.commit()
+
+    return jsonify({})
+
+
+@app.route('/composite-key-table', methods=['GET'])
+def get_composite_key_table():
+    composite_key_tables = CompositeKeyTable.query.all()
+
+    composite_key_table_json = [
+        {"c1": c.column_1, "c2": c.column_2, "c3": c.column_3}
+        for c in composite_key_tables
+    ]
+
+    return jsonify(composite_key_table_json)
 
 
 if __name__ == '__main__':
