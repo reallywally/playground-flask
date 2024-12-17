@@ -7,6 +7,13 @@ app = Flask(__name__)
 # PostgreSQL 연결 설정
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1q2w3e@localhost/board_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    'pool_size': 10,
+    'max_overflow': 20,
+    'pool_timeout': 30,
+    'pool_recycle': 1800,
+    'pool_pre_ping': True
+}
 
 db.init_app(app)
 
@@ -49,6 +56,27 @@ def update(post_id):
     db.session.commit()
 
     return jsonify({})
+
+
+@app.route('/page', methods=['GET'])
+def page():
+    page = 1
+    per_page = 2
+
+    posts = Post.query.offset((page - 1) * per_page).limit(per_page).all()
+
+    total = Post.query.count()
+    result = {
+        "total": total,
+        "page": page,
+        "per_page": per_page,
+        "items": [
+            {"id": post.column_1, "title": post.column_2, "content": post.column_3}
+            for post in posts
+        ]
+    }
+
+    return result
 
 
 @app.route('/raw-query', methods=['GET'])
