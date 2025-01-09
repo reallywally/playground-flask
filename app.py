@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, request, jsonify
 from models import db, Post, CompositeKeyTable
 from sqlalchemy.sql import text
 from datetime import datetime, date
@@ -7,8 +7,9 @@ from flask.json.provider import DefaultJSONProvider
 
 class CustomJSONProvider(DefaultJSONProvider):
     def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.strftime('%Y-%m-%d %H:%M:%S')
         if isinstance(obj, date):
-            # Format the datetime object as a string
             return obj.isoformat()
         # Call the base class method for other types
         return super().default(obj)
@@ -98,7 +99,7 @@ def page():
 def raw_query():
     query = """
         SELECT *
-        FROM public.post 
+        FROM public.post
     """
 
     result = db.session.execute(text(query), )
@@ -114,7 +115,7 @@ def raw_query():
 def raw_query_params():
     query = """
         SELECT *
-        FROM public.post 
+        FROM public.post
         WHERE column_1 = :post_id
     """
 
