@@ -1,6 +1,18 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from models import db, Post, CompositeKeyTable
 from sqlalchemy.sql import text
+from datetime import datetime, date
+from flask.json.provider import DefaultJSONProvider
+
+
+class CustomJSONProvider(DefaultJSONProvider):
+    def default(self, obj):
+        if isinstance(obj, date):
+            # Format the datetime object as a string
+            return obj.isoformat()
+        # Call the base class method for other types
+        return super().default(obj)
+
 
 app = Flask(__name__)
 
@@ -16,10 +28,13 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
 }
 
 db.init_app(app)
+app.json = CustomJSONProvider(app)
 
-# 데이터베이스 초기화
-with app.app_context():
-    db.create_all()
+
+@app.route('/date-format')
+def date_format():
+    d = date(2021, 1, 1)
+    return jsonify({"date": d})
 
 
 # 게시판 목록

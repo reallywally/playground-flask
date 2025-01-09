@@ -52,3 +52,6 @@ Content-Type: application/json
 GET http://127.0.0.1:5000/composite-key-table
 Content-Type: application/json
 
+### 날짜 포맷 테스트
+GET http://127.0.0.1:5000/date-format
+Content-Type: application/json
